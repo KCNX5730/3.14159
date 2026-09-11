@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPEDE · Browser Hub</title>
+  <style>
+    /* ---------- GLOBAL RESET ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+    }
+
+    /* ---------- PLAIN WHITE PAGE ---------- */
+    html, body {
+      background: #ffffff;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      color: #1a2b35;
+    }
+
+    .page {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 2.2rem 1.5rem 3rem;
+    }
+
+    .spede-container {
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    /* ---------- HEADER & LOGO ---------- */
+    .spede-header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2.2rem;
+      justify-content: center;
+    }
+
+    .logo-wrapper {
+      width: 80px;
+      height: 80px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 16px;
+    }
+
+    .title-wrapper {
+      text-align: left;
+      flex: 1;
+    }
+
+    /* ---------- TITLE ---------- */
+    .spede-title {
+      font-family: 'Copperplate Gothic', 'Copperplate', 'Copperplate Gothic Light', 'Copperplate Gothic Bold', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 6px;
+      color: #ffffff;
+      -webkit-text-stroke: 2px #0b2b3b;
+      paint-order: stroke fill;
+      text-shadow:
+        0 0 8px rgba(0, 210, 255, 0.85),
+        0 0 18px rgba(0, 190, 255, 0.65),
+        0 0 36px rgba(0, 160, 255, 0.45),
+        0 0 60px rgba(0, 130, 255, 0.25);
+      margin-bottom: 0.1rem;
+      line-height: 1.2;
+      min-height: 4.2rem;
+      display: inline-block;
+      transition: text-shadow 0.4s;
+    }
+
+    .spede-title.glowing {
+      animation: titlePulse 3s ease-in-out infinite;
+    }
+
+    @keyframes titlePulse {
+      0%, 100% {
+        text-shadow:
+          0 0 8px rgba(0, 210, 255, 0.85),
+          0 0 18px rgba(0, 190, 255, 0.65),
+          0 0 36px rgba(0, 160, 255, 0.45),
+          0 0 60px rgba(0, 130, 255, 0.25);
+      }
+      50% {
+        text-shadow:
+          0 0 12px rgba(0, 230, 255, 1),
+          0 0 26px rgba(0, 200, 255, 0.85),
+          0 0 50px rgba(0, 170, 255, 0.6),
+          0 0 85px rgba(0, 140, 255, 0.35);
+      }
+    }
+
+    /* ---------- SUBTITLE ---------- */
+    .spede-subtitle {
+      font-family: 'Arial Black', Arial, sans-serif;
+      font-style: italic;
+      font-weight: 900;
+      font-size: 0.9rem;
+      letter-spacing: 1.6px;
+      margin-top: 4px;
+      background: linear-gradient(90deg,
+        #00b3ff, #6a11cb, #f5576c, #ffd200, #00b3ff);
+      background-size: 300% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      color: transparent;
+      animation: vibrantFlow 5s linear infinite;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.12));
+    }
+
+    @keyframes vibrantFlow {
+      0%   { background-position:   0% 50%; }
+      100% { background-position: 300% 50%; }
+    }
+
+    /* ---------- SEARCH BAR ---------- */
+    .search-area {
+      position: relative;
+      margin: 0 auto 2.2rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 1.4rem 4rem 1.4rem 1.8rem;
+      border: 2px solid #d8e0e6;
+      border-radius: 60px;
+      background: #ffffff;
+      color: #0b2b3b;
+      font-size: 1.3rem;
+      font-weight: 500;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      box-shadow: 0 2px 10px rgba(0, 40, 70, 0.05);
+    }
+
+    .search-input::placeholder {
+      color: #93a3ae;
+      font-weight: 400;
+    }
+
+    .search-input:focus {
+      border-color: #00b3ff;
+      box-shadow: 0 0 0 5px rgba(0, 179, 255, 0.15);
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: transform 0.2s;
+    }
+
+    .search-btn:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .search-btn svg {
+      width: 30px;
+      height: 30px;
+      fill: none;
+      stroke: #0b2b3b;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* ---------- FLAT MENUS ---------- */
+    .menus-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 0.5rem 0.2rem 0.7rem;
+      border-bottom: 2px solid #e6ebef;
+      transition: border-color 0.25s;
+    }
+
+    .menu-header:hover {
+      border-bottom-color: #00b3ff;
+    }
+
+    /* Selected label (replaces plain text after selection) */
+    .menu-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0b2b3b;
+      letter-spacing: 0.4px;
+      flex-wrap: wrap;
+    }
+
+    .menu-label img {
+      width: 22px;
+      height: 22px;
+      border-radius: 5px;
+      border: 1px solid #e6ebef;
+      background: #ffffff;
+      padding: 1px;
+      object-fit: contain;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .menu-arrow {
+      width: 18px;
+      height: 18px;
+      transition: transform 0.4s ease;
+      fill: none;
+      stroke: #0b2b3b;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .menu-arrow.rotated {
+      transform: rotate(-90deg);
+    }
+
+    /* Collapsible list */
+    .menu-content {
+      max-height: 0;
+      overflow-y: auto;
+      transition: max-height 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0;
+      background: transparent;
+    }
+
+    .menu-content.open {
+      max-height: 360px;
+      padding: 0.5rem 0 0.3rem;
+    }
+
+    .menu-content::-webkit-scrollbar { width: 6px; }
+    .menu-content::-webkit-scrollbar-track { background: transparent; }
+    .menu-content::-webkit-scrollbar-thumb {
+      background: #cfd9e0;
+      border-radius: 10px;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.9rem;
+      padding: 0.6rem 0.4rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      color: #2b3a44;
+      font-weight: 500;
+      font-size: 0.98rem;
+    }
+
+    .menu-item:hover {
+      background: #f2f6f9;
+    }
+
+    .menu-item.active {
+      background: #e6f7ff;
+      color: #0077b6;
+      font-weight: 600;
+    }
+
+    .menu-item img {
+      width: 26px;
+      height: 26px;
+      flex-shrink: 0;
+      border-radius: 6px;
+      object-fit: contain;
+      background: #ffffff;
+      padding: 2px;
+      border: 1px solid #e6ebef;
+    }
+
+    .menu-item span {
+      line-height: 1.2;
+    }
+
+    /* ---------- DARK PROFESSIONAL FOOTER ---------- */
+    .spede-footer {
+      background: #232323;
+      color: #ffffff;
+      padding: 2rem 1.5rem 1.6rem;
+    }
+
+    .footer-inner {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.2rem;
+    }
+
+    .footer-socials {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.6rem;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      padding: 0.35rem 0.7rem;
+      border-radius: 30px;
+      transition: background 0.25s, color 0.25s, transform 0.2s;
+    }
+
+    .social-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .social-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      fill: currentColor;
+    }
+
+    .social-link.instagram:hover { color: #ff5e8a; }
+    .social-link.facebook:hover  { color: #4a90e2; }
+    .social-link.gmail:hover     { color: #ff6b6b; }
+
+    .footer-legal {
+      max-width: 900px;
+      text-align: center;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0.2px;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 768px) {
+      .page { padding: 1.5rem 1.1rem 2.5rem; }
+
+      .spede-header {
+        flex-direction: row;
+        gap: 0.8rem;
+        justify-content: center;
+      }
+
+      .logo-wrapper { width: 58px; height: 58px; }
+
+      .spede-title {
+        font-size: 2rem;
+        letter-spacing: 3px;
+        min-height: 2.4rem;
+        -webkit-text-stroke: 1.5px #0b2b3b;
+      }
+
+      .spede-subtitle { font-size: 0.82rem; letter-spacing: 1.2px; }
+
+      .search-input {
+        padding: 1.1rem 3.5rem 1.1rem 1.2rem;
+        font-size: 1.1rem;
+      }
+
+      .search-btn svg { width: 25px; height: 25px; }
+
+      .menus-container { grid-template-columns: 1fr; gap: 1.4rem; }
+
+      .menu-label { font-size: 0.98rem; }
+      .menu-label img { width: 20px; height: 20px; }
+
+      .menu-content.open { max-height: 300px; }
+
+      .footer-socials { gap: 0.8rem; }
+      .social-link { font-size: 0.8rem; padding: 0.3rem 0.6rem; }
+      .footer-legal { font-size: 0.72rem; }
+    }
+
+    @media (max-width: 480px) {
+      .spede-header { gap: 0.6rem; }
+      .logo-wrapper { width: 46px; height: 46px; }
+
+      .spede-title {
+        font-size: 1.55rem;
+        letter-spacing: 2.5px;
+        min-height: 1.9rem;
+        -webkit-text-stroke: 1.2px #0b2b3b;
+      }
+
+      .spede-subtitle { font-size: 0.72rem; letter-spacing: 1px; }
+
+      .search-input {
+        padding: 1rem 3rem 1rem 1rem;
+        font-size: 1rem;
+      }
+
+      .search-btn { right: 12px; }
+      .search-btn svg { width: 22px; height: 22px; }
+
+      .menu-label { font-size: 0.9rem; gap: 0.4rem; }
+
+      .footer-socials {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== WHITE PAGE CONTENT ========== -->
+  <div class="page">
+    <div class="spede-container">
+
+      <!-- HEADER -->
+      <header class="spede-header">
+        <div class="logo-wrapper">
+          <img src="logo.png" alt="SPEDE Logo" id="spedeLogo"
+               onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%230b2b3b%22/><text x=%2250%22 y=%2265%22 font-size=%2240%22 font-family=%22Arial Black%22 font-weight=%22900%22 fill=%22%23ffffff%22 text-anchor=%22middle%22>S</text></svg>';" />
+        </div>
+
+        <div class="title-wrapper">
+          <h1 class="spede-title" id="spedeTitle">SPEED</h1>
+          <h2 class="spede-subtitle">A Bhargav's Project</h2>
+        </div>
+      </header>
+
+      <!-- SEARCH BAR -->
+      <div class="search-area">
+        <input type="text" class="search-input" id="searchInput" placeholder="Type your search here..." autocomplete="off" />
+        <button class="search-btn" id="searchBtn" aria-label="Search">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7" />
+            <line x1="16" y1="16" x2="21" y2="21" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- MENUS -->
+      <div class="menus-container">
+
+        <!-- Search Engine Menu -->
+        <div class="menu-section">
+          <div class="menu-header" id="engineHeader">
+            <span class="menu-label" id="engineLabel">Choose Search Engine:</span>
+            <svg class="menu-arrow" id="engineArrow" viewBox="0 0 24 24">
+              <polyline points="15 6 9 12 15 18" />
+            </svg>
+          </div>
+          <div class="menu-content" id="engineContent">
+            <div class="menu-item active" data-url="https://www.google.com/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=google.com&sz=64" alt="Google">
+              <span>Google</span>
+            </div>
+            <div class="menu-item" data-url="https://www.bing.com/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=bing.com&sz=64" alt="Bing">
+              <span>Bing</span>
+            </div>
+            <div class="menu-item" data-url="https://search.yahoo.com/search?p=">
+              <img src="https://www.google.com/s2/favicons?domain=yahoo.com&sz=64" alt="Yahoo">
+              <span>Yahoo</span>
+            </div>
+            <div class="menu-item" data-url="https://duckduckgo.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=duckduckgo.com&sz=64" alt="DuckDuckGo">
+              <span>DuckDuckGo</span>
+            </div>
+            <div class="menu-item" data-url="https://www.baidu.com/s?wd=">
+              <img src="https://www.google.com/s2/favicons?domain=baidu.com&sz=64" alt="Baidu">
+              <span>Baidu</span>
+            </div>
+            <div class="menu-item" data-url="https://yandex.com/search/?text=">
+              <img src="https://www.google.com/s2/favicons?domain=yandex.com&sz=64" alt="Yandex">
+              <span>Yandex</span>
+            </div>
+            <div class="menu-item" data-url="https://search.brave.com/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=brave.com&sz=64" alt="Brave">
+              <span>Brave</span>
+            </div>
+            <div class="menu-item" data-url="https://www.ecosia.org/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=ecosia.org&sz=64" alt="Ecosia">
+              <span>Ecosia</span>
+            </div>
+            <div class="menu-item" data-url="https://www.qwant.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=qwant.com&sz=64" alt="Qwant">
+              <span>Qwant</span>
+            </div>
+            <div class="menu-item" data-url="https://www.ask.com/web?q=">
+              <img src="https://www.google.com/s2/favicons?domain=ask.com&sz=64" alt="Ask">
+              <span>Ask</span>
+            </div>
+            <div class="menu-item" data-url="https://search.aol.com/aol/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=aol.com&sz=64" alt="AOL">
+              <span>AOL</span>
+            </div>
+            <div class="menu-item" data-url="https://search.naver.com/search.naver?query=">
+              <img src="https://www.google.com/s2/favicons?domain=naver.com&sz=64" alt="Naver">
+              <span>Naver</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI Agents Menu -->
+        <div class="menu-section">
+          <div class="menu-header" id="aiHeader">
+            <span class="menu-label" id="aiLabel">Choose AI Agents:</span>
+            <svg class="menu-arrow" id="aiArrow" viewBox="0 0 24 24">
+              <polyline points="15 6 9 12 15 18" />
+            </svg>
+          </div>
+          <div class="menu-content" id="aiContent">
+            <div class="menu-item" data-url="https://chat.openai.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=64" alt="ChatGPT">
+              <span>ChatGPT</span>
+            </div>
+            <div class="menu-item" data-url="https://claude.ai/new?q=">
+              <img src="https://www.google.com/s2/favicons?domain=claude.ai&sz=64" alt="Claude">
+              <span>Claude</span>
+            </div>
+            <div class="menu-item" data-url="https://gemini.google.com/app?q=">
+              <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" alt="Gemini">
+              <span>Gemini</span>
+            </div>
+            <div class="menu-item" data-url="https://copilot.microsoft.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=copilot.microsoft.com&sz=64" alt="Copilot">
+              <span>Copilot</span>
+            </div>
+            <div class="menu-item" data-url="https://www.perplexity.ai/search?q=">
+              <img src="https://www.google.com/s2/favicons?domain=perplexity.ai&sz=64" alt="Perplexity">
+              <span>Perplexity</span>
+            </div>
+            <div class="menu-item" data-url="https://www.midjourney.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=midjourney.com&sz=64" alt="Midjourney">
+              <span>Midjourney</span>
+            </div>
+            <div class="menu-item" data-url="https://labs.openai.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=openai.com&sz=64" alt="DALL·E">
+              <span>DALL·E</span>
+            </div>
+            <div class="menu-item" data-url="https://grok.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=x.ai&sz=64" alt="Grok">
+              <span>Grok</span>
+            </div>
+            <div class="menu-item" data-url="https://chat.mistral.ai/chat?q=">
+              <img src="https://www.google.com/s2/favicons?domain=mistral.ai&sz=64" alt="Mistral">
+              <span>Mistral</span>
+            </div>
+            <div class="menu-item" data-url="https://chat.deepseek.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=deepseek.com&sz=64" alt="DeepSeek">
+              <span>DeepSeek</span>
+            </div>
+            <div class="menu-item" data-url="https://poe.com/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=poe.com&sz=64" alt="Poe">
+              <span>Poe</span>
+            </div>
+            <div class="menu-item" data-url="https://huggingface.co/chat/?q=">
+              <img src="https://www.google.com/s2/favicons?domain=huggingface.co&sz=64" alt="HuggingChat">
+              <span>HuggingChat</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== DARK PROFESSIONAL FOOTER ========== -->
+  <footer class="spede-footer">
+    <div class="footer-inner">
+
+      <div class="footer-socials">
+        <a class="social-link instagram" href="https://instagram.com/bhargavprandihingia" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.5" cy="6.5" r="1.4" fill="currentColor"/>
+          </svg>
+          bhargavprandihingia
+        </a>
+
+        <a class="social-link facebook" href="https://facebook.com/server12007" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" fill="currentColor"/>
+          </svg>
+          server12007
+        </a>
+
+        <a class="social-link gmail" href="mailto:lotusggs69@gmail.com">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" fill="currentColor"/>
+          </svg>
+          lotusggs69@gmail.com
+        </a>
+      </div>
+
+      <p class="footer-legal">
+        © 2026 SPEDE Inc. All rights reserved. SPEDE, the SPEDE logo, and its stylized variants
+        are registered trademarks of SPEDE Inc. in the United States and other countries.
+        Use of this website and the SPEDE browser software is subject to our Terms of Service,
+        Privacy Policy, and End User License Agreement (EULA).
+      </p>
+
+    </div>
+  </footer>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    (function() {
+      /* ---------- TITLE WORD SHUFFLE: SPEED → SPEDE ---------- */
+      const titleEl = document.getElementById('spedeTitle');
+      const finalWord = 'SPEDE';
+      const startWord = 'SPEED';
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+      titleEl.textContent = startWord;
+
+      setTimeout(function() {
+        let frame = 0;
+        const totalFrames = 22;
+
+        const interval = setInterval(function() {
+          let result = '';
+          for (let i = 0; i < finalWord.length; i++) {
+            const resolveFrame = 6 + i * 3.5;
+            if (frame >= resolveFrame) {
+              result += finalWord[i];
+            } else {
+              if (frame < 4 && startWord[i] === finalWord[i]) {
+                result += startWord[i];
+              } else {
+                result += alphabet[Math.floor(Math.random() * alphabet.length)];
+              }
+            }
+          }
+          titleEl.textContent = result;
+          frame++;
+
+          if (frame > totalFrames) {
+            titleEl.textContent = finalWord;
+            titleEl.classList.add('glowing');
+            clearInterval(interval);
+          }
+        }, 55);
+      }, 1100);
+
+      /* ---------- DOM REFS ---------- */
+      const engineHeader  = document.getElementById('engineHeader');
+      const engineContent = document.getElementById('engineContent');
+      const engineArrow   = document.getElementById('engineArrow');
+      const engineLabel   = document.getElementById('engineLabel');
+
+      const aiHeader  = document.getElementById('aiHeader');
+      const aiContent = document.getElementById('aiContent');
+      const aiArrow   = document.getElementById('aiArrow');
+      const aiLabel   = document.getElementById('aiLabel');
+
+      const searchInput = document.getElementById('searchInput');
+      const searchBtn   = document.getElementById('searchBtn');
+
+      /* ---------- ACCORDION TOGGLE ---------- */
+      engineHeader.addEventListener('click', function() {
+        engineContent.classList.toggle('open');
+        engineArrow.classList.toggle('rotated');
+      });
+
+      aiHeader.addEventListener('click', function() {
+        aiContent.classList.toggle('open');
+        aiArrow.classList.toggle('rotated');
+      });
+
+      /* ---------- SELECTION STATE ---------- */
+      let selectedEngineUrl = 'https://www.google.com/search?q=';
+
+      /* ---------- HEADER LABEL UPDATE ---------- */
+      const ENGINE_PREFIX = 'Choose Search Engine:';
+      const AI_PREFIX     = 'Choose AI Agents:';
+
+      /**
+       * Updates a menu header label to show the chosen item's icon and name.
+       * e.g. "Choose Search Engine:  [icon] Google"
+       */
+      function updateLabel(labelEl, prefix, item) {
+        const imgEl  = item.querySelector('img');
+        const nameEl = item.querySelector('span');
+        const iconSrc = imgEl ? imgEl.src : '';
+        const name    = nameEl ? nameEl.textContent : '';
+
+        // Build the new content with icon + name
+        labelEl.innerHTML = '';
+
+        const prefixText = document.createTextNode(prefix + ' ');
+        labelEl.appendChild(prefixText);
+
+        if (iconSrc) {
+          const icon = document.createElement('img');
+          icon.src = iconSrc;
+          icon.alt = name;
+          labelEl.appendChild(icon);
+        }
+
+        const nameSpan = document.createElement('span');
+        nameSpan.textContent = name;
+        labelEl.appendChild(nameSpan);
+      }
+
+      /**
+       * Wires up all menu items inside a menu.
+       */
+      function bindMenuItems(contentEl, arrowEl, labelEl, prefix) {
+        const items = contentEl.querySelectorAll('.menu-item');
+
+        items.forEach(function(item) {
+          item.addEventListener('click', function() {
+            // 1. Update active state
+            items.forEach(function(sibling) {
+              sibling.classList.remove('active');
+            });
+            item.classList.add('active');
+
+            // 2. Save the selected target URL
+            selectedEngineUrl = item.getAttribute('data-url');
+
+            // 3. Close the menu
+            contentEl.classList.remove('open');
+            arrowEl.classList.remove('rotated');
+
+            // 4. Show the selected item in the header
+            updateLabel(labelEl, prefix, item);
+
+            // 5. Focus the search input so the user can type immediately
+            searchInput.focus();
+          });
+        });
+      }
+
+      bindMenuItems(engineContent, engineArrow, engineLabel, ENGINE_PREFIX);
+      bindMenuItems(aiContent,     aiArrow,     aiLabel,     AI_PREFIX);
+
+      /* ---------- SEARCH FUNCTIONALITY ---------- */
+      function performSearch() {
+        const query = searchInput.value.trim();
+        if (query === '') {
+          searchInput.focus();
+          return;
+        }
+        const targetUrl = selectedEngineUrl + encodeURIComponent(query);
+        window.open(targetUrl, '_blank');
+      }
+
+      searchBtn.addEventListener('click', performSearch);
+      searchInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') performSearch();
+      });
+    })();
+  </script>
+</body>
+</html>
