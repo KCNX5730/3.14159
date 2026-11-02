@@ -3,9 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Edge-like Browser — Custom Background</title>
+<title>Edge</title>
 
-<!-- Note: Access-Control-Allow-Origin is a server-side header. -->
 <meta http-equiv="Access-Control-Allow-Origin" content="https://notwin11.pages.dev, https://kcnx5730.github.io">
 
 <style>
@@ -38,6 +37,12 @@
   }
 
   .browser { position: relative; z-index: 1; height: 100vh; display: flex; flex-direction: column; }
+  
+  /* Fullscreen Mode Adjustments */
+  .browser.is-fullscreen .tab-bar,
+  .browser.is-fullscreen .toolbar {
+    display: none !important;
+  }
 
   /* ---------- Tab bar ---------- */
   .tab-bar {
@@ -118,7 +123,7 @@
     height: 46px;
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     padding: 0 8px;
     background: var(--glass);
     backdrop-filter: blur(18px) saturate(160%);
@@ -137,11 +142,29 @@
   .nav-btn:disabled { color: #b9bec4; cursor: default; }
   .star-btn.saved { color: #f2a63b; }
   .star-btn.saved svg path { fill: currentColor; }
+
+  /* Rectangular Fullscreen Button in Right Topic Area */
+  .rect-fs-btn {
+    width: 36px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    color: #333a41;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .rect-fs-btn:hover {
+    background: rgba(255, 255, 255, 0.85);
+  }
+
   .address-bar {
     flex: 1;
     display: flex; align-items: center; gap: 9px;
     height: 32px;
-    margin: 0 8px;
+    margin: 0 4px;
     padding: 0 12px;
     background: rgba(255, 255, 255, 0.55);
     border: 1px solid transparent;
@@ -173,6 +196,30 @@
     margin: 0 2px;
   }
   .profile-btn:hover { background: #cfe3fd; }
+
+  /* ---------- Floating Close Fullscreen Button ---------- */
+  .close-fs-btn {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 9999;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    border: 1px dashed rgba(255, 255, 255, 0.6); /* Cut rectangle appearance */
+    border-radius: 4px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.15s, transform 0.15s;
+  }
+  .close-fs-btn:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: scale(1.05);
+  }
 
   /* ---------- Menu ---------- */
   .menu {
@@ -208,54 +255,54 @@
   .tab-content.active { display: block; }
   iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-  /* ---------- New tab page ---------- */
+  /* ---------- New tab page (Optimized Bing Search Container Size) ---------- */
   .newtab {
     height: 100%;
     display: flex; flex-direction: column;
     align-items: center;
-    gap: 26px;
-    padding: 11vh 24px 24px;
+    gap: 20px;
+    padding: 6vh 20px 20px; /* Reduced vertical padding */
     overflow: auto;
     background: transparent;
     color: #fff;
     text-shadow: 0 1px 6px rgba(0, 0, 0, 0.55);
   }
-  .nt-greeting { font-size: 24px; font-weight: 600; letter-spacing: .2px; color: #fff; }
+  .nt-greeting { font-size: 22px; font-weight: 600; letter-spacing: .2px; color: #fff; }
   .nt-search {
-    width: min(620px, 100%);
-    height: 52px;
-    display: flex; align-items: center; gap: 12px;
-    padding: 0 20px;
+    width: min(500px, 92%); /* Made Bing size slightly smaller */
+    height: 44px;           /* Slightly smaller search box height */
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 16px;
     background: rgba(255, 255, 255, 0.90);
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.5);
-    border-radius: 26px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
+    border-radius: 22px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
   }
   .nt-search svg { flex: none; color: #8a94a0; }
   .nt-search input {
     flex: 1; min-width: 0;
     border: none; outline: none;
     background: transparent;
-    font-size: 15px; color: #1f2933;
+    font-size: 14px; color: #1f2933;
     font-family: inherit;
     text-shadow: none;
   }
   
   /* Fixed layout using CSS Grid */
   .nt-links {
-    width: min(660px, 100%);
+    width: min(560px, 95%);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 10px;
     justify-items: center;
   }
 
   .nt-link {
-    width: 80px;
-    display: flex; flex-direction: column; align-items: center; gap: 8px;
-    padding: 10px 4px;
+    width: 72px;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 8px 4px;
     border: none;
     border-radius: 10px;
     background: transparent;
@@ -266,15 +313,15 @@
   }
   .nt-link:hover { background: rgba(255, 255, 255, 0.14); transform: translateY(-1px); }
   .nt-icon {
-    width: 48px; height: 48px;
+    width: 42px; height: 42px;
     display: grid; place-items: center;
-    border-radius: 12px;
+    border-radius: 10px;
     color: #fff;
-    font-size: 19px; font-weight: 600;
+    font-size: 17px; font-weight: 600;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   }
   .nt-label {
-    font-size: 12px; color: #fff; font-weight: 500;
+    font-size: 11px; color: #fff; font-weight: 500;
     max-width: 100%;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
@@ -296,7 +343,7 @@
 
   .nt-add .nt-icon {
     background: rgba(255, 255, 255, 0.18);
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 300;
     line-height: 1;
     box-shadow: none;
@@ -380,7 +427,14 @@
 </head>
 <body>
 
-<div class="browser">
+<div class="browser" id="browserApp">
+  <!-- Floating Close Fullscreen button (Cut rectangle style, visible only in fullscreen) -->
+  <button class="close-fs-btn" id="closeFullScreenBtn" title="Exit Full Screen" hidden>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+    </svg>
+  </button>
+
   <!-- Tab bar -->
   <div class="tab-bar">
     <div class="tabs" id="tabs">
@@ -417,6 +471,14 @@
     <button class="profile-btn" id="profileBtn" title="Profile">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6"/></svg>
     </button>
+    
+    <!-- Rectangular Full Screen Button placed in the right topic area -->
+    <button class="rect-fs-btn" id="fullScreenBtn" title="Enter Full Screen">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    </button>
+
     <button class="nav-btn" id="menuBtn" title="Settings and more">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg>
     </button>
@@ -496,6 +558,7 @@
   }
 
   const state = { tabs: [], activeId: null, seq: 0 };
+  const browserApp = $("#browserApp");
   const contentEl = $("#content");
   const tabsEl = $("#tabs");
   const newTabBtn = $("#newTabBtn");
@@ -504,10 +567,41 @@
   const fwdBtn = $("#fwdBtn");
   const reloadBtn = $("#reloadBtn");
   const starBtn = $("#starBtn");
+  const fullScreenBtn = $("#fullScreenBtn");
+  const closeFullScreenBtn = $("#closeFullScreenBtn");
   const menu = $("#menu");
   const modal = $("#shortcutModal");
 
   const activeTab = () => state.tabs.find((t) => t.id === state.activeId) || null;
+
+  /* Fullscreen Handler */
+  function enterFullScreen() {
+    if (browserApp.requestFullscreen) {
+      browserApp.requestFullscreen();
+    } else if (browserApp.webkitRequestFullscreen) {
+      browserApp.webkitRequestFullscreen();
+    }
+  }
+
+  function exitFullScreen() {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+
+  document.addEventListener("fullscreenchange", onFullScreenChange);
+  document.addEventListener("webkitfullscreenchange", onFullScreenChange);
+
+  function onFullScreenChange() {
+    const isFS = !!document.fullscreenElement || !!document.webkitFullscreenElement;
+    browserApp.classList.toggle("is-fullscreen", isFS);
+    closeFullScreenBtn.hidden = !isFS;
+  }
+
+  fullScreenBtn.addEventListener("click", enterFullScreen);
+  closeFullScreenBtn.addEventListener("click", exitFullScreen);
 
   function resolveInput(raw) {
     const s = raw.trim();
@@ -630,7 +724,7 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "nt-link";
-      btn.title = link.page || link.url; // Tooltip uses the 'Page' value
+      btn.title = link.page || link.url;
 
       const icon = document.createElement("span");
       icon.className = "nt-icon";
@@ -639,7 +733,7 @@
 
       const label = document.createElement("span");
       label.className = "nt-label";
-      label.textContent = link.label; // Visual label uses the 'Name' value
+      label.textContent = link.label;
 
       const remove = document.createElement("button");
       remove.type = "button";
@@ -662,7 +756,6 @@
     addTile.title = "Add shortcut";
     addTile.innerHTML = '<span class="nt-icon">+</span><span class="nt-label">Add</span>';
     
-    // Open HTML modal instead of native prompt
     addTile.addEventListener("click", () => {
       $("#inpPage").value = "";
       $("#inpName").value = "";
@@ -890,7 +983,7 @@
   });
 
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.hidden = true; // Close on backdrop click
+    if (e.target === modal) modal.hidden = true;
   });
 
   $("#mSave").addEventListener("click", () => {
@@ -904,7 +997,6 @@
     const origin = originOf(url);
     
     if (origin) {
-      // Update if exists, otherwise push new
       const existing = shortcuts.find((s) => originOf(s.url) === origin);
       if (existing) {
         existing.page = page || prettyHost(origin);
